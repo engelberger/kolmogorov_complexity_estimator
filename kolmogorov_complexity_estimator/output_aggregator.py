@@ -131,3 +131,27 @@ class OutputFrequencyDistribution:
             self.effective_halting = data.get("effective_halting", 0)
             self.effective_total = data.get("effective_total", 0)
             self.D_distribution = data.get("D_distribution", {})
+
+    def record_run_batch(
+        self,
+        batch_output_counts: Dict[str, int],
+        batch_non_halting_reasons: Dict[str, int],
+        batch_total_processed: int,
+        batch_total_halting: int,
+    ) -> None:
+        """
+        Record outcomes of a batch of TM runs.
+        :param batch_output_counts: counts of halted output strings.
+        :param batch_non_halting_reasons: counts by filter name or 'timeout'.
+        :param batch_total_processed: total machines processed in batch.
+        :param batch_total_halting: total halted machines in batch.
+        """
+        # Update total processed and halted counts
+        self.total_processed_raw += batch_total_processed
+        self.total_halting_raw += batch_total_halting
+        # Update output counts
+        for s, c in batch_output_counts.items():
+            self.output_counts[s] += c
+        # Update non-halting reasons
+        for reason, c in batch_non_halting_reasons.items():
+            self.non_halting_reasons[reason] += c

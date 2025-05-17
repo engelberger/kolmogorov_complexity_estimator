@@ -10,10 +10,14 @@ import pytest
 def _project_root():
     return Path(__file__).resolve().parents[2]
 
-@pytest.mark.parametrize("workers,use_reduced", [
-    (1, False),
-    (2, True),
-])
+
+@pytest.mark.parametrize(
+    "workers,use_reduced",
+    [
+        (1, False),
+        (2, True),
+    ],
+)
 def test_run_ctm_simulation(tmp_path, workers, use_reduced):
     """
     Integration test for examples/run_ctm_simulation.py.
@@ -33,12 +37,18 @@ def test_run_ctm_simulation(tmp_path, workers, use_reduced):
     cmd = [
         sys.executable,
         str(script_path),
-        "--n-states", "2",
-        "--max-steps", "5",
-        "--workers", str(workers),
-        "--checkpoint-file", str(checkpoint_file),
-        "--output-file", str(output_file),
-        "--checkpoint-interval", "10",
+        "--n-states",
+        "2",
+        "--max-steps",
+        "5",
+        "--workers",
+        str(workers),
+        "--checkpoint-file",
+        str(checkpoint_file),
+        "--output-file",
+        str(output_file),
+        "--checkpoint-interval",
+        "10",
     ]
     if use_reduced:
         cmd.append("--use-reduced-enum")
@@ -68,6 +78,6 @@ def test_run_ctm_simulation(tmp_path, workers, use_reduced):
         dist = {s: c / halting for s, c in raw_counts.items()}
     # Distribution probabilities should sum to approximately 1
     total_prob = sum(dist.values())
-    assert abs(total_prob - 1.0) < 1e-6, (
-        f"Distribution sums to {total_prob}, expected 1.0"
-    )
+    assert (
+        abs(total_prob - 1.0) < 1e-6
+    ), f"Distribution sums to {total_prob}, expected 1.0"

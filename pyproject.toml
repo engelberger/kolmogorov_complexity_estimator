@@ -62,6 +62,9 @@ target-version = ['py39'] # Or your minimum Python version
 
 [tool.ruff]
 line-length = 88
+target-version = "py39" # Or your minimum Python version
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -71,11 +74,8 @@ select = [
     "B",  # flake8-bugbear
 ]
 ignore = []
-# fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
-# unfixable = []
-target-version = "py39" # Or your minimum Python version
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["kolmogorov_complexity_estimator"]
 
 [tool.pytest.ini_options]

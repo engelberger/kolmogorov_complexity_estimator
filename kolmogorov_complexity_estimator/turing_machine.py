@@ -4,6 +4,16 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from .tm_constants import BLANK_SYMBOL_DEFAULT, HALT_STATE
 
+# Attempt to import native Cython optimizations
+try:
+    from .native.tm_ext import check_cycle_two as native_check_cycle_two
+    from .native.tm_ext import check_escapee as native_check_escapee
+    from .native.tm_ext import cython_step
+
+    _USE_NATIVE_TM = True
+except ImportError:
+    _USE_NATIVE_TM = False
+
 
 class TuringMachine:
     """
@@ -45,6 +55,10 @@ class TuringMachine:
 
         :return: True if machine should continue, False if it has halted.
         """
+        # Use native optimized step if available
+        if _USE_NATIVE_TM:
+            return bool(cython_step(self))
+        # Else fallback to Python implementation
         # If already in halt state, stop
         if self.current_state == HALT_STATE:
             return False
@@ -91,6 +105,16 @@ class TuringMachine:
                  if any.
         """
         filters = runtime_filters or []
+        # Replace Python filters with native ones if available
+        if _USE_NATIVE_TM:
+            filters = [
+                native_check_escapee if f.__name__ == "check_for_escapee" else f
+                for f in filters
+            ]
+            filters = [
+                native_check_cycle_two if f.__name__ == "check_for_cycle_two" else f
+                for f in filters
+            ]
         while self.steps_taken < max_steps:
             # Execute one step
             continue_run = self.step()
