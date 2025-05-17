@@ -44,7 +44,7 @@ def test_escapee_filter_triggers():
     )
     assert status == "filtered"
     assert output is None
-    assert filter_name == "check_for_escapee"
+    assert filter_name == "check_escapee"
 
 
 def test_cycle_two_filter_triggers():
@@ -56,7 +56,7 @@ def test_cycle_two_filter_triggers():
     )
     assert status == "filtered"
     assert output is None
-    assert filter_name == "check_for_cycle_two"
+    assert filter_name == "check_cycle_two"
 
 
 # End of test_turing_machine.py
