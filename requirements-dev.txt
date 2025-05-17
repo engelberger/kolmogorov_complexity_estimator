@@ -9,3 +9,4 @@ sphinx_rtd_theme
 build # For building packages
 twine # For uploading to PyPI
 snakeviz # For interactive visualization of cProfile output 
+pre-commit # For git pre-commit hooks 
