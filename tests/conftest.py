@@ -1,1 +1,1 @@
-# Pytest fixtures and configuration 
+# Pytest fixtures and configuration

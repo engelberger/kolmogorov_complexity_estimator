@@ -1,14 +1,58 @@
-# Logic for TM encoding/decoding to/from integers 
+# Logic for TM encoding/decoding to/from integers
 from typing import Dict, Tuple
-from .tm_constants import SYMBOLS, HALT_STATE, MOVES
+
+from .tm_constants import HALT_STATE, MOVES, SYMBOLS
 
 # Invert MOVES mapping for decoding
 CODE_TO_MOVE_CHAR = {code: char for char, code in MOVES.items()}
 
 
+def _encode_transition(
+    next_state: int,
+    write_symbol: str,
+    move_code: int,
+    n_states: int,
+    current_state_for_err: int,
+    current_sym_for_err: str,
+) -> int:
+    """Helper to encode a single TM transition into its integer code."""
+    if next_state == HALT_STATE:
+        # move must be N
+        if move_code != MOVES["N"]:
+            raise ValueError(f"Invalid move for HALT_STATE: {move_code}")
+        # write_symbol index gives code 0 or 1
+        if write_symbol not in SYMBOLS:
+            raise ValueError(f"Invalid write symbol: {write_symbol}")
+        return SYMBOLS.index(write_symbol)
+    else:
+        # Active state entries
+        if not (1 <= next_state <= n_states):
+            raise ValueError(
+                f"Invalid next_state {next_state} "
+                f"for key {(current_state_for_err, current_sym_for_err)}"
+            )
+        if write_symbol not in SYMBOLS:
+            raise ValueError(f"Invalid write symbol: {write_symbol}")
+        # Determine move_char index
+        if move_code == MOVES["L"]:
+            move_idx = 0
+        elif move_code == MOVES["R"]:
+            move_idx = 1
+        else:
+            raise ValueError(
+                f"Invalid move code for non-halt state: {move_code}"
+            )
+        write_idx = SYMBOLS.index(write_symbol)
+        # Compute code offset: 2 + 4*(state-1) + write_idx*2 + move_idx
+        return (
+            2
+            + (next_state - 1) * (len(SYMBOLS) * 2)
+            + (write_idx * 2 + move_idx)
+        )
+
+
 def tm_to_int(
-    tm_table: Dict[Tuple[int, str], Tuple[int, str, int]],
-    n_states: int
+    tm_table: Dict[Tuple[int, str], Tuple[int, str, int]], n_states: int
 ) -> int:
     """
     Encode a full Turing machine transition table as an integer in [0, (4n+2)^(2n) - 1].
@@ -25,31 +69,9 @@ def tm_to_int(
     for state in range(1, n_states + 1):
         for sym in SYMBOLS:
             next_state, write_symbol, move_code = tm_table[(state, sym)]
-            # HALT_STATE entries
-            if next_state == HALT_STATE:
-                # move must be N
-                if move_code != MOVES['N']:
-                    raise ValueError(f"Invalid move for HALT_STATE: {move_code}")
-                # write_symbol index gives code 0 or 1
-                if write_symbol not in SYMBOLS:
-                    raise ValueError(f"Invalid write symbol: {write_symbol}")
-                code = SYMBOLS.index(write_symbol)
-            else:
-                # Active state entries
-                if not (1 <= next_state <= n_states):
-                    raise ValueError(f"Invalid next_state {next_state} for key {(state, sym)}")
-                if write_symbol not in SYMBOLS:
-                    raise ValueError(f"Invalid write symbol: {write_symbol}")
-                # Determine move_char index
-                if move_code == MOVES['L']:
-                    move_idx = 0
-                elif move_code == MOVES['R']:
-                    move_idx = 1
-                else:
-                    raise ValueError(f"Invalid move code for non-halt state: {move_code}")
-                write_idx = SYMBOLS.index(write_symbol)
-                # Compute code offset: 2 + 4*(state-1) + write_idx*2 + move_idx
-                code = 2 + (next_state - 1) * (len(SYMBOLS) * 2) + (write_idx * 2 + move_idx)
+            code = _encode_transition(
+                next_state, write_symbol, move_code, n_states, state, sym
+            )
             digits.append(code)
     # Combine digits into integer
     number = 0
@@ -61,8 +83,7 @@ def tm_to_int(
 
 
 def int_to_tm_table(
-    number: int,
-    n_states: int
+    number: int, n_states: int
 ) -> Dict[Tuple[int, str], Tuple[int, str, int]]:
     """
     Decode an integer in [0, (4n+2)^(2n) - 1] back into a transition table mapping.
@@ -93,7 +114,7 @@ def int_to_tm_table(
                 # HALT_STATE entry
                 next_state = HALT_STATE
                 write_symbol = SYMBOLS[code]
-                move_code = MOVES['N']
+                move_code = MOVES["N"]
             else:
                 # Active state entry
                 offset = code - 2
@@ -105,7 +126,7 @@ def int_to_tm_table(
                 next_state = state_idx + 1
                 write_symbol = SYMBOLS[write_idx]
                 # Determine move_char and code
-                move_char = ['L', 'R'][move_idx]
+                move_char = ["L", "R"][move_idx]
                 move_code = MOVES[move_char]
             tm_table[(state, sym)] = (next_state, write_symbol, move_code)
-    return tm_table 
+    return tm_table

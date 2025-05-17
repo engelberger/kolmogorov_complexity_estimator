@@ -1,35 +1,38 @@
-# Generators for raw and reduced TM sets 
+# Generators for raw and reduced TM sets
 from typing import Dict, Generator, Tuple
-from .tm_encoder import int_to_tm_table
+
 from .tm_constants import SYMBOLS
+from .tm_encoder import int_to_tm_table
 
 
 def generate_raw_tm_tables(
-    num_states: int,
-    num_symbols: int = 2
+    num_states: int, num_symbols: int = 2
 ) -> Generator[Dict[Tuple[int, str], Tuple[int, str, int]], None, None]:
     """
-    Generate all possible Turing machine transition tables for given num_states and num_symbols.
-    Uses integer enumeration and int_to_tm_table for decoding.
+    Generate all possible Turing machine transition tables for given num_states and
+    num_symbols. Uses integer enumeration and int_to_tm_table for decoding.
 
     :param num_states: Number of non-halting states (states 1..num_states).
     :param num_symbols: Number of tape symbols (must match configured SYMBOLS length).
-    :yield: A transition table dict mapping (state, symbol) to (next_state, write_symbol, move_code).
+    :yield: A transition table dict mapping (state, symbol) to (next_state,
+            write_symbol, move_code).
     """
     # Ensure supported symbol count
     if num_symbols != len(SYMBOLS):
-        raise ValueError(f"Only {len(SYMBOLS)} symbols supported, got num_symbols={num_symbols}")
+        raise ValueError(
+            f"Only {len(SYMBOLS)} symbols supported, " f"got num_symbols={num_symbols}"
+        )
     base = 4 * num_states + 2
     total_entries = num_states * num_symbols
     max_number = pow(base, total_entries)
     for code in range(max_number):
         # Decode the integer to a transition table
         tm_table = int_to_tm_table(code, num_states)
-        yield tm_table 
+        yield tm_table
+
 
 def generate_reduced_tm_tables(
-    num_states: int,
-    num_symbols: int = 2
+    num_states: int, num_symbols: int = 2
 ) -> Generator[Dict[Tuple[int, str], Tuple[int, str, int]], None, None]:
     """
     Generate a reduced set of Turing machine transition tables by symmetry:
@@ -40,7 +43,9 @@ def generate_reduced_tm_tables(
     """
     # Ensure supported symbol count
     if num_symbols != len(SYMBOLS):
-        raise ValueError(f"Only {len(SYMBOLS)} symbols supported, got num_symbols={num_symbols}")
+        raise ValueError(
+            f"Only {len(SYMBOLS)} symbols supported, " f"got num_symbols={num_symbols}"
+        )
     base = 4 * num_states + 2
     entry_count = num_states * num_symbols
     # Number of tail combinations after the first entry
@@ -59,4 +64,4 @@ def generate_reduced_tm_tables(
         for tail in range(subspace_size):
             number = offset + tail
             tm_table = int_to_tm_table(number, num_states)
-            yield tm_table 
+            yield tm_table

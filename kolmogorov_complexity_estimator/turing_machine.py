@@ -1,6 +1,7 @@
-# TuringMachine class, simulation logic 
+# TuringMachine class, simulation logic
 from collections import defaultdict
-from typing import Dict, Tuple, List, Callable, Optional
+from typing import Callable, Dict, List, Optional, Tuple
+
 from .tm_constants import BLANK_SYMBOL_DEFAULT, HALT_STATE
 
 
@@ -75,7 +76,7 @@ class TuringMachine:
     def run(
         self,
         max_steps: int,
-        runtime_filters: Optional[List[Callable[['TuringMachine'], bool]]] = None,
+        runtime_filters: Optional[List[Callable[["TuringMachine"], bool]]] = None,
     ) -> Tuple[str, Optional[str], Optional[str]]:
         """
         Run the Turing machine up to a maximum number of steps.
@@ -86,7 +87,8 @@ class TuringMachine:
         :return: A tuple (status, output_string, filter_name).
                  status is 'halted', 'timeout', or 'filtered'.
                  output_string is defined if halted, else None.
-                 filter_name is the __name__ of the filter that triggered stopping, if any.
+                 filter_name is the __name__ of the filter that triggered stopping,
+                 if any.
         """
         filters = runtime_filters or []
         while self.steps_taken < max_steps:
@@ -95,13 +97,13 @@ class TuringMachine:
             if not continue_run:
                 # Machine halted
                 output = self._extract_output_string()
-                return 'halted', output, None
+                return "halted", output, None
             # Apply runtime filters after step
             for f in filters:
                 if f(self):
-                    return 'filtered', None, f.__name__
+                    return "filtered", None, f.__name__
         # Reached max steps without halting or filtering
-        return 'timeout', None, None
+        return "timeout", None, None
 
     def _extract_output_string(self) -> str:
         """
@@ -111,10 +113,12 @@ class TuringMachine:
         :return: The output binary string, or empty string if no non-blank symbols.
         """
         # Find positions with non-blank symbols
-        non_blank_positions = [pos for pos, sym in self.tape.items() if sym != self.blank_symbol]
+        non_blank_positions = [
+            pos for pos, sym in self.tape.items() if sym != self.blank_symbol
+        ]
         if not non_blank_positions:
-            return ''
+            return ""
         left = min(non_blank_positions)
         right = max(non_blank_positions)
         # Collect symbols in range
-        return ''.join(self.tape[pos] for pos in range(left, right + 1)) 
+        return "".join(self.tape[pos] for pos in range(left, right + 1))

@@ -1,9 +1,9 @@
-# String ops, logging setup, config loading, common constants 
+# String ops, logging setup, config loading, common constants
 
-import logging
 import json
+import logging
 from pathlib import Path
-from typing import Union, Dict
+from typing import Dict, Union
 
 
 def get_binary_complement(s: str) -> str:
@@ -13,8 +13,8 @@ def get_binary_complement(s: str) -> str:
     :param s: Input binary string.
     :return: Complemented binary string.
     """
-    complement_map = {'0': '1', '1': '0'}
-    return ''.join(complement_map.get(ch, ch) for ch in s)
+    complement_map = {"0": "1", "1": "0"}
+    return "".join(complement_map.get(ch, ch) for ch in s)
 
 
 def reverse_string(s: str) -> str:
@@ -27,7 +27,7 @@ def reverse_string(s: str) -> str:
     return s[::-1]
 
 
-def setup_logging(level: Union[str, int] = 'INFO') -> None:
+def setup_logging(level: Union[str, int] = "INFO") -> None:
     """
     Configure the root logger with a standard format and level.
 
@@ -39,8 +39,7 @@ def setup_logging(level: Union[str, int] = 'INFO') -> None:
     else:
         numeric_level = level
     logging.basicConfig(
-        level=numeric_level,
-        format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        level=numeric_level, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
     )
 
 
@@ -53,22 +52,24 @@ def load_config_file(path: str) -> Dict:
     """
     config_path = Path(path)
     ext = config_path.suffix.lower()
-    if ext == '.json':
+    if ext == ".json":
         with open(config_path) as f:
             return json.load(f)
-    elif ext in ('.yaml', '.yml'):
+    elif ext in (".yaml", ".yml"):
         try:
             import yaml  # type: ignore
-        except ImportError:
-            raise ImportError('PyYAML is required to load YAML config files')
+        except ImportError as e:
+            raise ImportError("PyYAML is required to load YAML config files") from e
         with open(config_path) as f:
             return yaml.safe_load(f)
-    elif ext == '.toml':
+    elif ext == ".toml":
         try:
             import toml  # type: ignore
-        except ImportError:
-            raise ImportError('toml package is required to load TOML config files')
+        except ImportError as e:
+            raise ImportError(
+                "toml package is required to load TOML config files"
+            ) from e
         with open(config_path) as f:
             return toml.load(f)
     else:
-        raise ValueError(f'Unsupported config file format: {ext}') 
+        raise ValueError(f"Unsupported config file format: {ext}")

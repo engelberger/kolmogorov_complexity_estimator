@@ -1,6 +1,8 @@
-import pytest
-from kolmogorov_complexity_estimator.tm_enumerator import generate_raw_tm_tables, generate_reduced_tm_tables
 from kolmogorov_complexity_estimator.tm_constants import SYMBOLS
+from kolmogorov_complexity_estimator.tm_enumerator import (
+    generate_raw_tm_tables,
+    generate_reduced_tm_tables,
+)
 
 
 def test_generate_raw_tm_tables_n1_count_and_keys():
@@ -26,7 +28,8 @@ def test_generate_reduced_tm_tables_n1_empty():
 
 
 def test_generate_reduced_tm_tables_n2_count_and_keys():
-    # For n=2, base=4*2+2=10, total entries=2*2=4, reduced count=2*(n-1)*(base^(2n-1))=2*1*10^3=2000
+    # For n=2, base=4*2+2=10, total entries=2*2=4
+    # reduced count=2*(n-1)*(base^(2n-1))=2*1*10^3=2000
     expected_count = 2 * (2 - 1) * (10 ** (2 * 2 - 1))
     tables = list(generate_reduced_tm_tables(num_states=2))
     assert len(tables) == expected_count
@@ -35,4 +38,5 @@ def test_generate_reduced_tm_tables_n2_count_and_keys():
     for tm in tables[:10]:  # sample first 10 tables for key structure
         assert set(tm.keys()) == expected_keys
 
-# End of test_tm_enumerator.py 
+
+# End of test_tm_enumerator.py
