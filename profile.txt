@@ -1,0 +1,33 @@
+Sat May 17 15:38:57 2025    profile.prof
+
+         24424 function calls in 0.017 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.017    0.017 {built-in method builtins.exec}
+        1    0.000    0.000    0.017    0.017 <string>:1(<module>)
+        1    0.003    0.003    0.017    0.017 profile_simulation.py:20(run_simulation)
+     1002    0.001    0.000    0.008    0.000 tm_enumerator.py:7(generate_raw_tm_tables)
+     1001    0.005    0.000    0.007    0.000 tm_encoder.py:63(int_to_tm_table)
+     1000    0.001    0.000    0.004    0.000 turing_machine.py:75(run)
+     1000    0.002    0.000    0.002    0.000 turing_machine.py:41(step)
+     1000    0.001    0.000    0.001    0.000 turing_machine.py:106(_extract_output_string)
+     1000    0.001    0.000    0.001    0.000 reduction_filters.py:7(has_no_halt_transition)
+     5006    0.001    0.000    0.001    0.000 {built-in method builtins.pow}
+     4004    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}
+     1000    0.001    0.000    0.001    0.000 turing_machine.py:15(__init__)
+     1000    0.001    0.000    0.001    0.000 output_aggregator.py:26(record_run_outcome)
+     1000    0.000    0.000    0.000    0.000 {built-in method builtins.min}
+     2401    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+     1000    0.000    0.000    0.000    0.000 {built-in method builtins.max}
+     1000    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
+     1000    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+     1000    0.000    0.000    0.000    0.000 turing_machine.py:33(<lambda>)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 output_aggregator.py:11(__init__)
+        2    0.000    0.000    0.000    0.000 __init__.py:595(__init__)
+        2    0.000    0.000    0.000    0.000 __init__.py:668(update)
+        1    0.000    0.000    0.000    0.000 __init__.py:609(__missing__)
+
+

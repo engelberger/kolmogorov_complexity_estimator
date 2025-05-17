@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "KolmogorovComplexityEstimatorPythonPackage"
+version = "1.0.0"
+authors = [
+  { name="Felipe Engelberger", email="felipeengelberger@gmail.com" },
+]
+description = "A Python package implementing the Coding Theorem Method (CTM) for Kolmogorov complexity estimation, based on the paper 'Calculating Kolmogorov Complexity from the Output Frequency Distributions of Small Turing Machines'."
+readme = "README.md"
+requires-python = ">=3.9"  # Assuming 3.9 due to type hints and modern features, adjust if needed
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Development Status :: 4 - Beta", # Or "3 - Alpha" / "5 - Production/Stable"
+]
+keywords = ["kolmogorov complexity", "algorithmic information theory", "turing machines", "ctm", "algorithmic probability"]
+
+dependencies = [
+    # Add your runtime dependencies here, e.g.:
+    # "numpy>=1.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=3.0",
+    "black>=23.0",
+    "ruff>=0.1",
+    "sphinx>=5.0",
+    "sphinx-rtd-theme>=1.0",
+    "build>=0.10",      # For building the package
+    "twine>=3.8",       # For uploading to PyPI
+    # "mypy>=1.0",      # If you decide to use it
+]
+
+[project.urls]
+Homepage = "https://github.com/felipeengelberger/kolmogorov_complexity_estimator" # Replace with your actual repo URL
+Repository = "https://github.com/felipeengelberger/kolmogorov_complexity_estimator" # Replace with your actual repo URL
+# Documentation = "https://your-docs-url.com" # If you host them separately
+
+# Example entry points for command-line scripts (if your example scripts were to be installed as commands)
+# [project.scripts]
+# run-ctm-simulation = "kolmogorov_complexity_estimator.examples.run_ctm_simulation:main"
+# estimate-complexity = "kolmogorov_complexity_estimator.examples.estimate_complexity_from_file:main"
+# Note: To use these, your example scripts would need a main() function and to be structured as part of the installable package,
+# or you would need to create separate CLI wrapper scripts in your main package. For now, users run them directly via `python examples/script.py`.
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kolmogorov_complexity_estimator*"]
+exclude = ["tests*", "examples*"] # Exclude tests and examples from the wheel by default
+
+[tool.black]
+line-length = 88
+target-version = ['py39'] # Or your minimum Python version
+
+[tool.ruff]
+line-length = 88
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # Pyflakes
+    "I",  # isort
+    "C",  # McCabe complexity
+    "B",  # flake8-bugbear
+]
+ignore = []
+# fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+# unfixable = []
+target-version = "py39" # Or your minimum Python version
+
+[tool.ruff.isort]
+known-first-party = ["kolmogorov_complexity_estimator"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=kolmogorov_complexity_estimator --cov-report=term-missing"
+testpaths = [
+    "tests",
+]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*" 

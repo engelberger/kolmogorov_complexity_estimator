@@ -1,0 +1,11 @@
+# Development dependencies
+pytest
+pytest-cov
+black
+ruff
+# mypy # If you decide to use it formally
+sphinx
+sphinx_rtd_theme
+build # For building packages
+twine # For uploading to PyPI
+snakeviz # For interactive visualization of cProfile output 
