@@ -94,6 +94,5 @@ cython_debug/
 
 # Profiling data
 *.prof
-profile.txt
-*.md
+profile.txt*.md
 *.json
