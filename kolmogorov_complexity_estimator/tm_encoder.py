@@ -39,16 +39,10 @@ def _encode_transition(
         elif move_code == MOVES["R"]:
             move_idx = 1
         else:
-            raise ValueError(
-                f"Invalid move code for non-halt state: {move_code}"
-            )
+            raise ValueError(f"Invalid move code for non-halt state: {move_code}")
         write_idx = SYMBOLS.index(write_symbol)
         # Compute code offset: 2 + 4*(state-1) + write_idx*2 + move_idx
-        return (
-            2
-            + (next_state - 1) * (len(SYMBOLS) * 2)
-            + (write_idx * 2 + move_idx)
-        )
+        return 2 + (next_state - 1) * (len(SYMBOLS) * 2) + (write_idx * 2 + move_idx)
 
 
 def tm_to_int(
