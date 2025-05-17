@@ -24,6 +24,22 @@ from kolmogorov_complexity_estimator.tm_enumerator import (
 )
 from kolmogorov_complexity_estimator.turing_machine import TuringMachine
 
+# Worker globals for multiprocessing
+_GLOBAL_N_STATES = None
+_GLOBAL_BLANK_SYMBOL = None
+_GLOBAL_MAX_STEPS = None
+_GLOBAL_RUNTIME_FILTERS = None
+
+def _process_tm(tm_table):
+    # Worker task: apply pre-run filter and run TM
+    if has_no_halt_transition(tm_table):
+        return ("filtered", None, "no_halt_transition")
+    tm = TuringMachine(
+        num_states=_GLOBAL_N_STATES,
+        transition_table=tm_table,
+        blank_symbol=_GLOBAL_BLANK_SYMBOL,
+    )
+    return tm.run(_GLOBAL_MAX_STEPS, runtime_filters=_GLOBAL_RUNTIME_FILTERS)
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -65,6 +81,12 @@ def parse_args():
         help="Filepath for saving/loading simulation checkpoints",
     )
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="Number of worker processes for parallel simulation",
+    )
+    parser.add_argument(
         "--config-file",
         type=str,
         help="Optional config file (TOML/YAML) for parameters",
@@ -83,22 +105,48 @@ def main():
         enumerator = generate_raw_tm_tables(args.n_states)
     # Define runtime filters
     runtime_filters = [check_for_escapee, check_for_cycle_two]
-    # Simulation loop
-    for idx, tm_table in enumerate(enumerator, start=1):
-        # Pre-run filter: no halt transition
-        if has_no_halt_transition(tm_table):
-            agg.record_run_outcome("filtered", None, "no_halt_transition")
-        else:
-            # Instantiate and run TM
-            tm = TuringMachine(args.n_states, tm_table, blank_symbol=args.blank_symbol)
+    # Parallel or sequential processing
+    processed = 0
+    if args.workers > 1:
+        from multiprocessing import Pool
+        # Initialize globals for worker processes
+        global _GLOBAL_N_STATES, _GLOBAL_BLANK_SYMBOL
+        global _GLOBAL_MAX_STEPS, _GLOBAL_RUNTIME_FILTERS
+        _GLOBAL_N_STATES = args.n_states
+        _GLOBAL_BLANK_SYMBOL = args.blank_symbol
+        _GLOBAL_MAX_STEPS = args.max_steps
+        _GLOBAL_RUNTIME_FILTERS = runtime_filters
+
+        # Process TMs in parallel
+        with Pool(processes=args.workers) as pool:
+            for status, output, filter_name in pool.imap(
+                _process_tm, enumerator, chunksize=100
+            ):
+                processed += 1
+                agg.record_run_outcome(status, output, filter_name)
+                if processed % args.checkpoint_interval == 0:
+                    print(f"Checkpoint at {processed} TMs processed...")
+                    agg.save_distribution_to_file(args.checkpoint_file, raw=True)
+    else:
+        # Sequential processing
+        for idx, tm_table in enumerate(enumerator, start=1):
+            processed = idx
+            # Pre-run filter: no halt transition
+            if has_no_halt_transition(tm_table):
+                agg.record_run_outcome("filtered", None, "no_halt_transition")
+                continue
+            tm = TuringMachine(
+                num_states=args.n_states,
+                transition_table=tm_table,
+                blank_symbol=args.blank_symbol,
+            )
             status, output, filter_name = tm.run(
                 args.max_steps, runtime_filters=runtime_filters
             )
             agg.record_run_outcome(status, output, filter_name)
-        # Checkpointing
-        if idx % args.checkpoint_interval == 0:
-            print(f"Checkpoint at {idx} TMs processed...")
-            agg.save_distribution_to_file(args.checkpoint_file, raw=True)
+            if idx % args.checkpoint_interval == 0:
+                print(f"Checkpoint at {idx} TMs processed...")
+                agg.save_distribution_to_file(args.checkpoint_file, raw=True)
     # After enumeration
     M_red = agg.total_processed_raw
     if args.use_reduced_enum:

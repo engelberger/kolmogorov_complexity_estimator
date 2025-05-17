@@ -21,16 +21,20 @@ from kolmogorov_complexity_estimator.reduction_filters import (
     check_for_escapee,
     has_no_halt_transition,
 )
-from kolmogorov_complexity_estimator.tm_enumerator import generate_raw_tm_tables
+from kolmogorov_complexity_estimator.tm_enumerator import generate_raw_tm_tables, generate_reduced_tm_tables
 from kolmogorov_complexity_estimator.turing_machine import TuringMachine
 
 
-def run_simulation(n_states, max_steps, num_machines):
+def run_simulation(n_states, max_steps, num_machines, use_reduced=False):
     """
     Run a small CTM simulation for profiling.
     """
     ofd = OutputFrequencyDistribution(n_states)
-    enumerator = generate_raw_tm_tables(n_states)
+    # Choose raw or reduced enumeration
+    if use_reduced:
+        enumerator = generate_reduced_tm_tables(n_states)
+    else:
+        enumerator = generate_raw_tm_tables(n_states)
     for idx, tm_table in enumerate(enumerator):
         if idx >= num_machines:
             break
@@ -58,6 +62,11 @@ def main():
         "--num_machines", type=int, default=1000, help="Number of machines to simulate"
     )
     parser.add_argument(
+        "--use_reduced",
+        action="store_true",
+        help="Use reduced enumeration (exploit symmetries)",
+    )
+    parser.add_argument(
         "--output_profile",
         type=str,
         default="profile.prof",
@@ -67,7 +76,7 @@ def main():
 
     # Run under cProfile
     cProfile.runctx(
-        "run_simulation(args.n_states, args.max_steps, args.num_machines)",
+        "run_simulation(args.n_states, args.max_steps, args.num_machines, args.use_reduced)",
         globals(),
         locals(),
         filename=args.output_profile,
