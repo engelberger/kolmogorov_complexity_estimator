@@ -28,8 +28,11 @@ from kolmogorov_complexity_estimator.reduction_filters import (
 from kolmogorov_complexity_estimator.tm_enumerator import (
     generate_raw_tm_tables,
     generate_reduced_tm_tables,
+    generate_tm_numbers,
+    generate_reduced_tm_numbers,
 )
 from kolmogorov_complexity_estimator.turing_machine import TuringMachine
+from kolmogorov_complexity_estimator.tm_encoder import int_to_tm_table
 
 # Worker globals for multiprocessing
 _GLOBAL_N_STATES = None
@@ -143,9 +146,9 @@ def main():  # noqa: C901
         processed = 0
     # Select enumerator
     if args.use_reduced_enum:
-        enumerator = generate_reduced_tm_tables(args.n_states)
+        enumerator = generate_reduced_tm_numbers(args.n_states)
     else:
-        enumerator = generate_raw_tm_tables(args.n_states)
+        enumerator = generate_tm_numbers(args.n_states)
     # Skip already processed machines when resuming
     if processed > 0:
         enumerator = islice(enumerator, processed, None)
@@ -205,7 +208,8 @@ def main():  # noqa: C901
                     next_checkpoint += args.checkpoint_interval
     else:
         # Sequential processing
-        for _idx, tm_table in enumerate(enumerator, start=processed + 1):
+        for _idx, tm_number in enumerate(enumerator, start=processed + 1):
+            tm_table = int_to_tm_table(tm_number, args.n_states)
             # Pre-run filter: no halt transition
             if has_no_halt_transition(tm_table):
                 agg.record_run_outcome("filtered", None, "no_halt_transition")

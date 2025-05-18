@@ -6,6 +6,7 @@ from collections import Counter
 
 from .reduction_filters import has_no_halt_transition
 from .turing_machine import TuringMachine
+from .tm_encoder import int_to_tm_table
 
 # Globals for worker processes
 _GLOBAL_N_STATES = None
@@ -42,9 +43,9 @@ def process_tm(tm_table):
     return tm.run(_GLOBAL_MAX_STEPS, runtime_filters=_GLOBAL_RUNTIME_FILTERS)
 
 
-def process_tm_batch(tm_tables):
+def process_tm_batch(tm_numbers):
     """
-    Process a batch of TM tables. Returns aggregated results for the batch:
+    Process a batch of TM numbers. Returns aggregated results for the batch:
     (batch_output_counts, batch_non_halting_reasons, batch_total_processed,
     batch_total_halting)
     """
@@ -52,8 +53,13 @@ def process_tm_batch(tm_tables):
     batch_non_halting_reasons = Counter()
     batch_total_processed = 0
     batch_total_halting = 0
-    for tm_table in tm_tables:
+    for tm_number in tm_numbers:
         batch_total_processed += 1
+        
+        # Decode TM number to TM table
+        # _GLOBAL_N_STATES must be initialized in the worker by initialize_globals
+        tm_table = int_to_tm_table(tm_number, _GLOBAL_N_STATES)
+
         # Pre-run filter
         if has_no_halt_transition(tm_table):
             batch_non_halting_reasons["no_halt_transition"] += 1
