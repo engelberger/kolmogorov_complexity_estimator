@@ -25,14 +25,12 @@ from kolmogorov_complexity_estimator.reduction_filters import (
     check_for_escapee,
     has_no_halt_transition,
 )
+from kolmogorov_complexity_estimator.tm_encoder import int_to_tm_table
 from kolmogorov_complexity_estimator.tm_enumerator import (
-    generate_raw_tm_tables,
-    generate_reduced_tm_tables,
-    generate_tm_numbers,
     generate_reduced_tm_numbers,
+    generate_tm_numbers,
 )
 from kolmogorov_complexity_estimator.turing_machine import TuringMachine
-from kolmogorov_complexity_estimator.tm_encoder import int_to_tm_table
 
 # Worker globals for multiprocessing
 _GLOBAL_N_STATES = None

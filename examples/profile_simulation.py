@@ -13,15 +13,12 @@ Then run:
 import argparse
 import cProfile
 
-from kolmogorov_complexity_estimator.output_aggregator import (
-    OutputFrequencyDistribution,
-)
+from kolmogorov_complexity_estimator.output_aggregator import \
+    OutputFrequencyDistribution
 from kolmogorov_complexity_estimator.reduction_filters import (
-    check_for_cycle_two,
-    check_for_escapee,
-    has_no_halt_transition,
-)
-from kolmogorov_complexity_estimator.tm_enumerator import generate_raw_tm_tables, generate_reduced_tm_tables
+    check_for_cycle_two, check_for_escapee, has_no_halt_transition)
+from kolmogorov_complexity_estimator.tm_enumerator import (
+    generate_raw_tm_tables, generate_reduced_tm_tables)
 from kolmogorov_complexity_estimator.turing_machine import TuringMachine
 
 

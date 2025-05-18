@@ -2,8 +2,11 @@
 Cython module for optimized TuringMachine step and runtime filters.
 """
 
-from ..tm_constants import HALT_STATE #, BLANK_SYMBOL_DEFAULT # Not directly used here yet
-from collections import defaultdict, deque # For type hints and fallback attributes
+from collections import (defaultdict,  # For type hints and fallback attributes
+                         deque)
+
+from ..tm_constants import \
+    HALT_STATE  # , BLANK_SYMBOL_DEFAULT # Not directly used here yet
 
 # We operate on the Python TuringMachine object directly for now.
 # For maximal speed, one might cdef a Cython class mirroring TuringMachine attributes,

@@ -5,8 +5,8 @@ Utilities for parallel CTM simulation: initialization and per-table processing.
 from collections import Counter
 
 from .reduction_filters import has_no_halt_transition
-from .turing_machine import TuringMachine
 from .tm_encoder import int_to_tm_table
+from .turing_machine import TuringMachine
 
 # Globals for worker processes
 _GLOBAL_N_STATES = None
@@ -55,7 +55,7 @@ def process_tm_batch(tm_numbers):
     batch_total_halting = 0
     for tm_number in tm_numbers:
         batch_total_processed += 1
-        
+
         # Decode TM number to TM table
         # _GLOBAL_N_STATES must be initialized in the worker by initialize_globals
         tm_table = int_to_tm_table(tm_number, _GLOBAL_N_STATES)
