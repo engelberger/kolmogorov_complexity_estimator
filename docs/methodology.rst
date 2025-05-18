@@ -84,3 +84,30 @@ CTM approximates :math:`K(s)` by estimating :math:`\mathfrak{m}(s)` through empi
 For a more detailed discussion, refer to the original paper:
 
 *   Soler-Toscano, F., Zenil, H., Delahaye, J.-P., & Gauvrit, N. (2014). Calculating Kolmogorov Complexity from the Output Frequency Distributions of Small Turing Machines. *PLoS ONE, 9*(5), e96223. `https://doi.org/10.1371/journal.pone.0096223 <https://doi.org/10.1371/journal.pone.0096223>`_ 
+
+5. Parallel Implementation Considerations
+-----------------------------------------
+
+The original CTM implementation, as described in the paper, required significant computational resources - for example, the D(5) calculation took 18 days using 25 CPUs. To improve performance, this package implements a parallel execution architecture:
+
+**Parallelization Strategy:**
+
+a. **Batch Processing Model**:
+   The TM space is divided into batches that can be processed independently by worker processes. Each batch contains a predefined number of TM tables to simulate.
+
+b. **Worker-Manager Architecture**:
+   * A manager process coordinates the distribution of work and collection of results
+   * Worker processes execute TM simulations and apply filtering techniques
+   * Results are communicated back to the manager via multiprocessing queues
+
+c. **Resource Optimization**:
+   * Dynamic batch sizing adjusts based on machine characteristics
+   * Memory-efficient implementation to handle large TM spaces
+   * Worker processes maintain local aggregation to minimize communication overhead
+
+d. **Checkpointing Integration**:
+   * Thread-safe checkpointing ensures simulation can be stopped and resumed
+   * Global state is periodically synchronized from all workers
+   * Recovery from checkpoints preserves the parallel execution context
+
+The parallel implementation significantly reduces computation time (up to n×speedup with n cores for computation-bound workloads) while preserving the mathematical properties of the CTM approach. 

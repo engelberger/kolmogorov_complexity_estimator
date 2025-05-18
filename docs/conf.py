@@ -4,8 +4,8 @@ import sys
 sys.path.insert(0, os.path.abspath(".."))  # Point to the project root
 
 project = "KolmogorovComplexityEstimatorPythonPackage"
-copyright = "2024, Your Name"  # Replace with actual author/year
-author = "Your Name"  # Replace with actual author
+copyright = "2025, Felipe Engelberger"  # Updated
+author = "Felipe Engelberger"  # Updated
 release = "1.0.0"
 
 extensions = [
@@ -13,6 +13,8 @@ extensions = [
     "sphinx.ext.napoleon",  # For Google and NumPy style docstrings
     "sphinx.ext.viewcode",  # To add links to source code
     "sphinx.ext.intersphinx",  # For linking to other projects' docs
+    "sphinx.ext.todo",      # For tracking TODO items
+    "sphinx.ext.graphviz",  # For rendering graphviz diagrams (useful for parallelization architecture)
     # Add other extensions here if needed, e.g., 'sphinx_rtd_theme'
 ]
 

@@ -27,5 +27,17 @@ This page contains the auto-generated API reference documentation.
 .. automodule:: kolmogorov_complexity_estimator.complexity_engine
    :members:
 
+Parallelization
+--------------
+
+.. automodule:: kolmogorov_complexity_estimator.parallel_executor
+   :members:
+
+.. automodule:: kolmogorov_complexity_estimator.batch_processor
+   :members:
+
+Utilities
+--------
+
 .. automodule:: kolmogorov_complexity_estimator.utils
    :members: 

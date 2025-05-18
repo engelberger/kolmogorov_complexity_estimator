@@ -66,9 +66,7 @@ def generate_reduced_tm_tables(
             tm_table = int_to_tm_table(number, num_states)
             yield tm_table
 
-
 # New functions to yield TM numbers (integers) directly
-
 
 def generate_tm_numbers(
     num_states: int, num_symbols: int = 2
@@ -85,7 +83,6 @@ def generate_tm_numbers(
     max_number = pow(base, total_entries)
     for code in range(max_number):
         yield code
-
 
 def generate_reduced_tm_numbers(
     num_states: int, num_symbols: int = 2
@@ -114,8 +111,8 @@ def generate_reduced_tm_numbers(
     # Here, next_state_c is 1-indexed.
     # write_idx can be 0 or 1. move_idx for 'R' is 1.
 
-    for next_s in range(2, num_states + 1):  # next_state_c
-        for write_s_idx in range(len(SYMBOLS)):  # write_idx
+    for next_s in range(2, num_states + 1): # next_state_c
+        for write_s_idx in range(len(SYMBOLS)): # write_idx
             # move_idx for 'R' is 1 (if MOVES = {'L':0, 'R':1} in encoding)
             # or determined by actual move code if different.
             # Using the _encode_transition_cy logic:
@@ -140,9 +137,7 @@ def generate_reduced_tm_numbers(
             # This assumed:
             # code = 2 + (next_state - 1) * (len(SYMBOLS) * 2) + (write_idx * 2 + 1)
             # where next_state is 1-indexed.
-            initial_transition_code = (
-                2 + (next_s - 1) * (len(SYMBOLS) * 2) + (write_s_idx * 2 + 1)
-            )
+            initial_transition_code = 2 + (next_s - 1) * (len(SYMBOLS) * 2) + (write_s_idx * 2 + 1)
             allowed_initial_codes.append(initial_transition_code)
 
     for initial_code_val in allowed_initial_codes:

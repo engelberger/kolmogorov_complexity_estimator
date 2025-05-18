@@ -26,6 +26,7 @@ This script orchestrates the enumeration of Turing machines, their simulation, a
 *   `--num_machines_to_run` (int, optional): Run only the first N machines from the enumerator. Useful for testing or partial runs. By default, runs all machines in the selected enumeration.
 *   `--log_level` (str, optional): Set logging level (e.g., DEBUG, INFO, WARNING). Defaults to INFO.
 *   `--save_raw_counts` (flag, optional): If set, saves the raw output counts and non-halting statistics instead of the final D(n,m) probability distribution. This can be useful for later custom processing or merging.
+*   `--num_processes` (int, optional): Number of CPU cores to use for parallel execution. Defaults to 1 (sequential execution). Set to 0 to use all available CPU cores.
 
 **Example:**
 
@@ -36,9 +37,41 @@ This script orchestrates the enumeration of Turing machines, their simulation, a
        --max_runtime_steps 200 \
        --output_file_path examples/d_3_states_200_steps.json \
        --use_reduced_enumeration \
-       --checkpoint_interval 10000
+       --checkpoint_interval 10000 \
+       --num_processes 4
 
-This command will simulate 3-state Turing machines, using reduced enumeration, for a maximum of 200 steps each. The output distribution will be saved to `examples/d_3_states_200_steps.json`, and checkpoints will be saved every 10,000 machines processed.
+This command will simulate 3-state Turing machines, using reduced enumeration, for a maximum of 200 steps each, utilizing 4 CPU cores for parallel execution. The output distribution will be saved to `examples/d_3_states_200_steps.json`, and checkpoints will be saved every 10,000 machines processed.
+
+Parallel Execution
+-----------------
+
+The package supports parallel execution to speed up the simulation of Turing machines. This is particularly useful for larger TM spaces (e.g., n≥4).
+
+**How Parallelization Works:**
+
+1. **Worker Processes**: The simulation divides the TM space into batches and distributes them among multiple worker processes.
+2. **Batch Processing**: Each worker process handles its assigned TMs independently and collects local results.
+3. **Result Aggregation**: The main process periodically collects results from workers and updates the global output distribution.
+4. **Checkpointing**: The checkpointing mechanism is designed to be thread-safe, allowing for robust resumption even during parallel execution.
+
+**Performance Considerations:**
+
+* **Optimal Cores**: While using more cores generally improves performance, there's typically a point of diminishing returns based on:
+   * CPU architecture (core count, cache size)
+   * Memory constraints
+   * Batch size and processing overhead
+* **Memory Usage**: Parallel execution increases memory usage. For very large TM spaces, you may need to adjust batch sizes or limit the number of processes.
+* **Load Balancing**: The system automatically balances work across processors, but TM simulation times can vary significantly, which may impact perfect load distribution.
+
+**Monitoring Parallel Execution:**
+
+The simulation outputs progress logs showing:
+* Total machines processed
+* Machines processed per second
+* Estimated time remaining
+* Distribution of work across cores
+
+For long-running simulations (like D(5)), parallel execution can reduce runtime from days to hours depending on your hardware.
 
 ### `estimate_complexity_from_file.py`
 
